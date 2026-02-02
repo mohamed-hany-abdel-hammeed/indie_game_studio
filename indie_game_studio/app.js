@@ -2,26 +2,15 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
-const port = process.env.PORT || 8000;
-// const gameRoutes = require('./routes/gameRoutes');
+const port = process.env.PORT || 3000;
 
-// Middleware
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-// app.use('/api/games', gameRoutes);
 
-// Database Connection
-// mongoose.connect(process.env.DB_HOST, {
-//     // useNewUrlParser: true,
-//     // useUnifiedTopology: true,
-// })
-const dbHost = process.env.DB_HOST || 8000;
 async function connectDB() {
     try {
-        await mongoose.connect(dbHost);
+        await mongoose.connect(process.env.DB_HOST);
     } catch (error) {
         console.error('Error connecting to MongoDB:', error.message);
-        throw error;
     }
 }
 connectDB()
