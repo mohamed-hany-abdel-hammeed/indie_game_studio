@@ -1,51 +1,38 @@
 require ("dotenv").config();
 const express = require ("express");
 const app = express();
-const PORT = process.env.PORT || 8000; 
-const mongoose = require ("mongoose");
-app.use(express.json())
+const port = process.env.PORT || 8000;
+// const gameRoutes = require('./routes/gameRoutes');
 
- 
-// Exporting app for testing or further use 
-// Listening on port from .env or default to 8000
-// Basic route to respond with a message
-// Loading environment variables from .env file
-async function dbconnection(){
-    try {
-        await mongoose.connect(process.env.db_host);
-        //,{useNewUrlParser: true, useUnifiedTopology: true}//)
-    console.log("Database connected");
-}catch (error) {
-    console.log("Database connection error:", error.message);
-}  
-}
-dbconnection();
+// Middleware
+app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+// app.use('/api/games', gameRoutes);
 
-//require models
-const User = require ("./model/user");
-// Middleware to parse JSON request bodies
-app.post("/users", async (req, res)=>{
+// Database Connection
+// mongoose.connect(process.env.DB_HOST, {
+//     // useNewUrlParser: true,
+//     // useUnifiedTopology: true,
+// })
+const dbHost = process.env.DB_HOST || 8000;
+async function connectDB() {
     try {
-        const user =await User.create(req.body)
-        console.log(req.body)
-        res.json({
-            msg: "created done",
-            data: user
-        });
-        res.send("hi user")
-    }catch (error) {
-        // res.status(500).json({message: "Server error"});
-        console.log("error: ", error.message)
+        await mongoose.connect(dbHost);
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error.message);
+        throw error;
     }
+}
+connectDB()
+
+
+// Basic Route
+app.get('/', (req, res) => {
+    res.send('Welcome to the Indie Game Studio API');
 });
 
+// Start Server
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});     
 
-app.listen (PORT, () => {
-    console.log (`Second server is running on port ${PORT}`);
-});  
-
-
-// app.get ("/", (req, res) => {
-//     res.send ("Hello from the second server!");
-// });
-// module.exports = app;  
